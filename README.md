@@ -1,2 +1,247 @@
-# hinaiki-platform
-HINA'IKI – An intelligent global platform to discover, learn, explore, and find solutions for everyday life.
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HINA’IKI – Discover a world of possibilities</title>
+
+<style>
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background: #f6efe5;
+  color: #493326;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px 7%;
+  background: #493326;
+  color: #f8e9cc;
+}
+
+.logo {
+  font-size: 27px;
+  font-weight: bold;
+  letter-spacing: 3px;
+}
+
+nav a {
+  color: #f8e9cc;
+  text-decoration: none;
+  margin-left: 20px;
+  font-size: 14px;
+}
+
+.hero {
+  text-align: center;
+  padding: 95px 20px 75px;
+  background: linear-gradient(135deg, #654431, #38271f);
+  color: #fff0d7;
+}
+
+.hero h1 {
+  font-size: 48px;
+  margin-bottom: 15px;
+}
+
+.hero p {
+  font-size: 17px;
+  margin-bottom: 30px;
+  line-height: 1.6;
+}
+
+.search {
+  display: flex;
+  max-width: 650px;
+  margin: auto;
+  background: white;
+  border-radius: 40px;
+  padding: 7px;
+}
+
+.search input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 15px;
+  font-size: 15px;
+  min-width: 0;
+  border-radius: 40px;
+}
+
+.search button {
+  border: none;
+  background: #c49a62;
+  color: white;
+  padding: 14px 22px;
+  border-radius: 30px;
+  cursor: pointer;
+}
+
+.buttons {
+  margin-top: 22px;
+}
+
+.buttons button {
+  padding: 13px 22px;
+  margin: 6px;
+  border: 1px solid #e7c99c;
+  border-radius: 30px;
+  background: transparent;
+  color: #fff0d7;
+  cursor: pointer;
+}
+
+.section {
+  padding: 55px 7%;
+  text-align: center;
+}
+
+.section h2 {
+  font-size: 29px;
+  margin-bottom: 12px;
+}
+
+.section p {
+  line-height: 1.6;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.card {
+  background: #fffaf2;
+  padding: 28px 20px;
+  border-radius: 18px;
+  border: 1px solid #ead8bd;
+  box-shadow: 0 5px 18px #49332612;
+}
+
+.card span {
+  font-size: 35px;
+}
+
+.card h3 {
+  margin: 15px 0 10px;
+}
+
+.card p {
+  font-size: 14px;
+  color: #765d4b;
+}
+
+footer {
+  background: #493326;
+  color: #f8e9cc;
+  text-align: center;
+  padding: 25px;
+  font-size: 13px;
+}
+
+@media(max-width:600px) {
+  header {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  nav a {
+    margin: 0 7px;
+  }
+
+  .hero h1 {
+    font-size: 35px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">HINA’IKI</div>
+  <nav>
+    <a href="#accueil">Home</a>
+    <a href="#decouvrir">Discover</a>
+    <a href="#voyages">Travel</a>
+  </nav>
+</header>
+
+<section class="hero" id="accueil">
+  <h1>Welcome to HINA’IKI</h1>
+  <p>
+    Discover, learn, explore and find solutions.<br>
+    A world of possibilities, with the soul of the islands.
+  </p>
+
+  <form class="search" action="https://www.google.com/search" method="GET">
+    <input type="search" name="q" placeholder="What are you looking for?">
+    <button type="submit">Search</button>
+  </form>
+
+  <div class="buttons">
+    <button onclick="alert('HINA’IKI AI is coming soon!')">Ask HINA’IKI</button>
+    <button onclick="document.getElementById('decouvrir').scrollIntoView({behavior:'smooth'})">Discover</button>
+  </div>
+</section>
+
+<section class="section" id="decouvrir">
+  <h2>A world to discover</h2>
+  <p>One platform. Many possibilities.</p>
+
+  <div class="cards">
+    <div class="card">
+      <span>✨</span>
+      <h3>HINA’IKI AI</h3>
+      <p>Your intelligent everyday assistant.</p>
+    </div>
+
+    <div class="card">
+      <span>🌍</span>
+      <h3>Discover</h3>
+      <p>Ideas, knowledge and inspiration from around the world.</p>
+    </div>
+
+    <div class="card" id="voyages">
+      <span>🌺</span>
+      <h3>Travel</h3>
+      <p>Explore destinations and imagine your next journey.</p>
+    </div>
+
+    <div class="card">
+      <span>💡</span>
+      <h3>Money & Projects</h3>
+      <p>Discover opportunities and develop your ideas.</p>
+    </div>
+
+    <div class="card">
+      <span>🌴</span>
+      <h3>Islands</h3>
+      <p>Discover Polynesian culture and island life.</p>
+    </div>
+
+    <div class="card">
+      <span>❤️</span>
+      <h3>My Journey</h3>
+      <p>Set goals and move forward, one step at a time.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  HINA’IKI © 2026 — The world of answers, with the soul of the islands.
+</footer>
+
+</body>
+</html>
