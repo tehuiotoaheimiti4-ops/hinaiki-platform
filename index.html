@@ -664,11 +664,20 @@ footer strong {
 </footer>
 
 <script>
+
 function showAI() {
-  alert(
-    "HINA’IKI AI is coming soon. Our intelligent experience is currently in development. 🌺"
+  const question = prompt(
+    "🌺 HINA’IKI AI\n\nWhat would you like to ask?"
   );
+
+  if (question && question.trim()) {
+    alert(
+      "Thank you for your question! 🤎\n\n" +
+      "HINA’IKI AI is currently in development."
+    );
+  }
 }
+
 </script>
 
 
