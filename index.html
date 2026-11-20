@@ -665,18 +665,17 @@ footer strong {
 
 <script>
 
-function showAI() {
-  const question = prompt(
-    "🌺 HINA’IKI AI\n\nWhat would you like to ask?"
-  );
 
-  if (question && question.trim()) {
-    alert(
-      "Thank you for your question! 🤎\n\n" +
-      "HINA’IKI AI is currently in development."
-    );
+function showAI() {
+  const chat = document.getElementById("hinaiki-ai-chat");
+
+  if (chat) {
+    chat.style.display = "block";
+  } else {
+    alert("HINA’IKI AI chat is not installed yet.");
   }
 }
+
 
 </script>
 
