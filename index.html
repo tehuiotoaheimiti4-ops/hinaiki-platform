@@ -852,6 +852,50 @@ searchForm.addEventListener("submit", async function(event) {
   </form>
 </div>
 
+
+<script>
+document.getElementById("hinaiki-ai-form").addEventListener("submit", async function(event) {
+  event.preventDefault();
+
+  const input = document.getElementById("hinaiki-ai-input");
+  const messages = document.getElementById("hinaiki-ai-messages");
+  const question = input.value.trim();
+
+  if (!question) return;
+
+  const userMessage = document.createElement("p");
+  userMessage.textContent = question;
+  userMessage.style.cssText =
+    "align-self:flex-end;background:#65432e;color:#fffaf2;padding:12px 15px;border-radius:15px 15px 4px 15px;max-width:85%;overflow-wrap:anywhere;white-space:pre-wrap;font-size:14px;line-height:1.6;margin:0;";
+  messages.appendChild(userMessage);
+
+  const reply = document.createElement("p");
+  reply.textContent = "🌺 HINA’IKI AI is thinking...";
+  reply.style.cssText =
+    "align-self:flex-start;background:#fffaf2;color:#543b2b;padding:12px 15px;border-radius:15px 15px 15px 4px;max-width:85%;overflow-wrap:anywhere;white-space:pre-wrap;font-size:14px;line-height:1.6;margin:0;box-shadow:0 2px 8px #0001;";
+  messages.appendChild(reply);
+
+  input.value = "";
+  messages.scrollTop = messages.scrollHeight;
+
+  try {
+    const response = await fetch(
+      "https://hinaiki-search.tehuiotoaheimiti4.workers.dev/ai?q=" +
+      encodeURIComponent(question)
+    );
+
+    if (!response.ok) throw new Error("AI unavailable");
+
+    const data = await response.json();
+    reply.textContent = "🌺 " + (data.answer || "No answer generated.");
+  } catch (error) {
+    reply.textContent =
+      "🌺 Sorry, HINA’IKI AI is temporarily unavailable.";
+  }
+
+  messages.scrollTop = messages.scrollHeight;
+});
 </script>
 </body>
 </html>
+
