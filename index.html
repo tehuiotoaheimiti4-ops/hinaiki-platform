@@ -741,5 +741,47 @@ searchForm.addEventListener("submit", async function(event) {
   }
 });
 </script>
+<!-- HINA'IKI AI CHAT -->
+<div id="hinaiki-ai-chat" style="display:none;position:fixed;bottom:20px;right:20px;width:min(360px,calc(100vw - 40px));background:#fffaf2;color:#543b2b;border:1px solid #c5a47e;border-radius:16px;padding:20px;box-shadow:0 12px 40px #0003;z-index:9999;">
+
+  <div style="display:flex;justify-content:space-between;align-items:center;">
+    <h3 style="margin:0;">🌺 HINA’IKI AI</h3>
+    <button type="button" onclick="document.getElementById('hinaiki-ai-chat').style.display='none'">✕</button>
+  </div>
+
+  <p>Your island-inspired AI assistant</p>
+
+  <div id="hinaiki-ai-messages" style="height:200px;overflow-y:auto;background:#f1e5d5;padding:12px;border-radius:10px;margin-bottom:12px;">
+    Aloha 🌺 How can I help you?
+  </div>
+
+  <form id="hinaiki-ai-form" style="display:flex;gap:8px;">
+    <input id="hinaiki-ai-input" type="text" placeholder="Ask me anything..." required style="flex:1;min-width:0;padding:10px;border:1px solid #c5a47e;border-radius:7px;">
+    <button type="submit" style="background:#65432e;color:white;border:0;border-radius:7px;padding:10px;">Send</button>
+  </form>
+</div>
+
+<script>
+document.getElementById("hinaiki-ai-form").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  const input = document.getElementById("hinaiki-ai-input");
+  const messages = document.getElementById("hinaiki-ai-messages");
+  const question = input.value.trim();
+
+  if (!question) return;
+
+  const userMessage = document.createElement("p");
+  userMessage.textContent = "You: " + question;
+  messages.appendChild(userMessage);
+
+  const reply = document.createElement("p");
+  reply.textContent = "🌺 HINA’IKI AI is getting ready to answer your questions.";
+  messages.appendChild(reply);
+
+  input.value = "";
+  messages.scrollTop = messages.scrollHeight;
+});
+</script>
 </body>
 </html>
