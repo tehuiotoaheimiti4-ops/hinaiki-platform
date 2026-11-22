@@ -98,7 +98,42 @@ const searchForm=document.getElementById('hinaiki-search-form'),resultsBox=docum
 searchForm.addEventListener('submit',async e=>{e.preventDefault();const query=searchForm.elements.q.value.trim();if(!query)return;resultsBox.replaceChildren();const status=document.createElement('p');status.className='status';status.textContent='Recherche en cours… 🌺';resultsBox.appendChild(status);try{const response=await fetch(API+'/search?q='+encodeURIComponent(query));if(!response.ok)throw Error('Service indisponible');const data=await response.json();resultsBox.replaceChildren();if(!Array.isArray(data.results)||!data.results.length){resultsBox.textContent='Aucun résultat trouvé.';return}data.results.forEach(item=>{const card=document.createElement('article'),link=document.createElement('a'),p=document.createElement('p');if(typeof item.url==='string'&&/^https?:\/\//i.test(item.url)){link.href=item.url;link.target='_blank';link.rel='noopener noreferrer'}link.textContent=item.title||'Résultat';p.textContent=(item.description||'').replace(/<[^>]*>/g,'');card.append(link,p);resultsBox.appendChild(card)})}catch(err){resultsBox.textContent='La recherche est momentanément indisponible. Réessaie plus tard.'}});
 const chatForm=document.getElementById('hinaiki-ai-form'),chatInput=document.getElementById('hinaiki-ai-input'),messages=document.getElementById('hinaiki-ai-messages');
 function addBubble(message,who){const el=document.createElement('div');el.className='bubble '+who;el.textContent=message;messages.appendChild(el);messages.scrollTop=messages.scrollHeight;return el}
-async function sendQuestion(question){if(!question.trim())return;showAI();document.getElementById('quick-actions')?.remove();addBubble(question,'user');chatInput.value='';const reply=addBubble('🌺 Je réfléchis à ta demande…','ai');const button=chatForm.querySelector('button');button.disabled=true;try{const response=await fetch(API+'/ai?q='+encodeURIComponent(question));if(!response.ok)throw Error('Service indisponible');const data=await response.json();reply.textContent='🌺 '+(data.answer||'Je n’ai pas de réponse pour le moment.')}catch(err){reply.textContent='🌺 Désolée, HINA’IKI AI est momentanément indisponible. Réessaie un peu plus tard.'}finally{button.disabled=false;messages.scrollTop=messages.scrollHeight;chatInput.focus()}}
+// Historique temporaire en mémoire : effacé au rechargement de la page.
+const conversationHistory=[];
+let isSending=false;
+async function sendQuestion(question){
+  question=String(question||'').trim();
+  if(!question||isSending)return;
+  isSending=true;
+  showAI();
+  document.getElementById('quick-actions')?.remove();
+  addBubble(question,'user');
+  chatInput.value='';
+  const reply=addBubble('🌺 Je réfléchis à ta demande…','ai');
+  const button=chatForm.querySelector('button');
+  button.disabled=true;
+  try{
+    const response=await fetch(API+'/ai',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({question,history:conversationHistory.slice(-12)})
+    });
+    const data=await response.json();
+    if(!response.ok)throw Error(data.error||'Service indisponible');
+    const answer=String(data.answer||'Je n’ai pas de réponse pour le moment.');
+    reply.textContent='🌺 '+answer;
+    conversationHistory.push({role:'user',content:question},{role:'assistant',content:answer});
+    // Limite la quantité de contexte envoyée à chaque demande.
+    if(conversationHistory.length>12)conversationHistory.splice(0,conversationHistory.length-12);
+  }catch(err){
+    reply.textContent='🌺 '+(err.message||'HINA’IKI AI est momentanément indisponible. Réessaie un peu plus tard.');
+  }finally{
+    isSending=false;
+    button.disabled=false;
+    messages.scrollTop=messages.scrollHeight;
+    chatInput.focus();
+  }
+}
 chatForm.addEventListener('submit',e=>{e.preventDefault();sendQuestion(chatInput.value.trim())});
 const journeyPrompts={
  aide:"J’ai besoin d’aide pour une situation du quotidien. Commence par me poser une seule question simple pour comprendre mon besoin, puis aide-moi à explorer plusieurs options et à choisir mon prochain pas, sans décider à ma place.",
