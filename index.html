@@ -100,7 +100,8 @@ main section:not(.hero){padding:38px max(4%,calc((100vw - 1350px)/2))}.section-t
   <div class="step-card">
     <p style="color:#f3c589;letter-spacing:2px;font-size:12px;font-weight:700">🌺 HINA’IKI · MA FICHE PERSONNELLE</p>
     <h2 id="step-title">Mon prochain pas</h2>
-    <p>Après ta discussion avec HINA’IKI AI, note ici ce que tu souhaites retenir. <strong>C'est toi qui choisis tes mots et ton prochain pas.</strong></p>
+    <p>Après ta discussion avec HINA’IKI AI, crée une proposition personnalisée à partir de tes échanges. Tu peux ensuite la modifier librement.</p>
+    <div class="step-buttons"><button type="button" id="step-generate">🌺 Créer mon prochain pas avec HINA’IKI AI</button></div>
     <div class="step-fields">
       <label for="step-goal">🤎 Mon objectif
         <textarea id="step-goal" maxlength="500" placeholder="Ex. Trouver un travail dans lequel je me sens mieux, sans précipiter mon départ."></textarea>
@@ -118,7 +119,7 @@ main section:not(.hero){padding:38px max(4%,calc((100vw - 1350px)/2))}.section-t
       <button type="button" id="step-clear" class="secondary">Effacer ma fiche</button>
     </div>
     <p class="step-status" id="step-status" role="status" aria-live="polite"></p>
-    <p style="font-size:12px">🔒 Cette fiche reste dans cette page tant qu'elle est ouverte. Aucun enregistrement de la fiche n'est envoyé à notre serveur. Télécharge-la avant de quitter ou d'actualiser la page. Évite d'y inscrire des informations sensibles.</p>
+    <p style="font-size:12px">🔒 Pour créer la fiche, les derniers messages de la conversation sont envoyés à HINA’IKI AI. La fiche remplie reste dans cette page, sans enregistrement permanent. Télécharge-la avant de quitter ou d’actualiser. Évite de partager des informations sensibles.</p>
   </div>
 </section>
 <section class="search-section" id="contact"><div class="search-wrap"><h2>Explore aussi le monde avec HINA’IKI</h2><p>Recherche des informations sur le web ou échange avec notre assistant pour clarifier ton prochain pas.</p><form class="search-form" id="hinaiki-search-form"><input name="q" type="search" placeholder="Que souhaites-tu rechercher ?" aria-label="Recherche sur le web" required><button type="submit">Rechercher ↗</button></form><div class="results" id="hinaiki-results" aria-live="polite"></div></div></section>
@@ -189,6 +190,64 @@ const stepGoal=document.getElementById('step-goal');
 const stepAction=document.getElementById('step-action');
 const stepNext=document.getElementById('step-next');
 const stepStatus=document.getElementById('step-status');
+// Génération à partir de la conversation existante, sans changer le Worker ni le design du chat.
+const generateStepButton=document.getElementById('step-generate');
+generateStepButton.addEventListener('click',async()=>{
+  if(isSending){
+    stepStatus.textContent='Attends la fin de la réponse de HINA’IKI AI.';
+    return;
+  }
+  const actualMessages=conversationHistory.filter(m=>m.role==='user');
+  if(!actualMessages.length){
+    stepStatus.textContent='Discute d’abord avec HINA’IKI AI pour qu’elle puisse comprendre ta situation.';
+    showAI();
+    return;
+  }
+  generateStepButton.disabled=true;
+  generateStepButton.textContent='🌺 HINA’IKI prépare ta fiche…';
+  stepStatus.textContent='Création de ta fiche personnalisée en cours…';
+  try{
+    const instruction=[
+      "À partir de notre conversation précédente, prépare ma fiche personnelle « Mon prochain pas ».",
+      "N'invente aucun détail personnel. Si ma situation est encore floue, propose une première action de clarification.",
+      "Ne pose pas de question dans cette réponse.",
+      "Réponds uniquement avec ces trois lignes, sans introduction ni Markdown :",
+      "OBJECTIF: une phrase courte décrivant mon objectif",
+      "ACTION: une action concrète, simple et réaliste",
+      "ENSUITE: une étape possible après cette première action",
+      "Chaque valeur doit tenir en 250 caractères maximum."
+    ].join('\n');
+    const response=await fetch(API+'/ai',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({question:instruction,history:conversationHistory.slice(-12)})
+    });
+    const data=await response.json();
+    if(!response.ok)throw new Error(data.error||'Service indisponible');
+    const answer=String(data.answer||'');
+    const extract=(label,nextLabels)=>{
+      const start=new RegExp('(?:^|\\n)\\s*'+label+'\\s*:\\s*','i').exec(answer);
+      if(!start)return '';
+      const tail=answer.slice(start.index+start[0].length);
+      const stop=new RegExp('\\n\\s*(?:'+nextLabels.join('|')+')\\s*:','i').exec(tail);
+      return (stop?tail.slice(0,stop.index):tail).trim().replace(/^[-*]\s*/,'').slice(0,500);
+    };
+    const goal=extract('OBJECTIF',['ACTION','ENSUITE']);
+    const action=extract('ACTION',['OBJECTIF','ENSUITE']);
+    const next=extract('ENSUITE',['OBJECTIF','ACTION']);
+    if(!goal||!action||!next)throw new Error('La fiche n’a pas pu être structurée. Réessaie.');
+    stepGoal.value=goal;
+    stepAction.value=action;
+    stepNext.value=next;
+    stepStatus.textContent='🌺 Ta fiche est prête ! Relis-la, modifie-la si nécessaire, puis télécharge-la.';
+    document.getElementById('mon-prochain-pas').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(error){
+    stepStatus.textContent='Impossible de créer la fiche pour le moment : '+error.message;
+  }finally{
+    generateStepButton.disabled=false;
+    generateStepButton.textContent='🌺 Créer mon prochain pas avec HINA’IKI AI';
+  }
+});
 function getStepText(){return 'HINA’IKI — MON PROCHAIN PAS\n\nMON OBJECTIF\n'+stepGoal.value.trim()+'\n\nMON PREMIER PAS\n'+stepAction.value.trim()+'\n\nET ENSUITE ?\n'+stepNext.value.trim()+'\n';}
 function stepHasContent(){return [stepGoal,stepAction,stepNext].some(field=>field.value.trim());}
 document.getElementById('step-download').addEventListener('click',()=>{
