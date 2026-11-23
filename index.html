@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#351b13"><meta name="description" content="HINA’IKI — un espace pour explorer ses possibilités, éclairer ses décisions et avancer à son rythme avec l’intelligence artificielle.">
-<title>HINA’IKI | Un prochain pas vers tes possibilités</title>
+<title>HINA’IKI | Des réponses et des possibilités à explorer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Great+Vibes&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -74,57 +74,31 @@ main section:not(.hero){padding:38px max(4%,calc((100vw - 1350px)/2))}.section-t
 .guide-card .btn{border:0}.guide-note{max-width:900px;margin:25px auto 0;text-align:center;font-size:12px;line-height:1.7;color:#f6dec2}
 @media(max-width:800px){.guide-grid{grid-template-columns:1fr;max-width:510px}}
 
-/* Fiche Mon prochain pas — sans modifier la fenêtre de discussion */
-.step-card{max-width:850px;margin:auto;padding:28px;border:1px solid #e5b77f;border-radius:26px;background:linear-gradient(135deg,rgba(51,24,17,.96),rgba(92,48,31,.94));box-shadow:0 18px 45px #18080680}
-.step-card h2{font:500 clamp(28px,4vw,42px) 'Playfair Display',Georgia,serif;color:#ffe6c0;margin:5px 0 10px}
-.step-card p{line-height:1.65;color:#fff0df}
-.step-fields{display:grid;gap:17px;margin:22px 0}
-.step-fields label{display:grid;gap:8px;font-weight:700;color:#ffe1b5}
-.step-fields textarea{width:100%;min-height:78px;resize:vertical;padding:14px;border:1px solid #d6aa76;border-radius:13px;background:#fff7ed;color:#39251b;font:inherit;line-height:1.5}
-.step-fields textarea:focus-visible{outline:3px solid #ffdc9f;outline-offset:2px}
-.step-buttons{display:flex;flex-wrap:wrap;gap:10px}
-.step-buttons button{border-radius:28px;padding:12px 19px;border:1px solid #f8d59f;font-weight:700;background:#f4d6a7;color:#321a12}
-.step-buttons button.secondary{background:transparent;color:#fff0d5}
-.step-status{min-height:1.5em;font-size:13px}
-@media print{body{background:#fff!important;color:#24150f!important}header,.hero,main>section:not(#mon-prochain-pas),footer,.chat,.chat-launcher,.step-buttons,.step-status{display:none!important}main section#mon-prochain-pas{display:block!important;padding:0!important}.step-card{border:1px solid #9b7b5d;box-shadow:none;background:#fff!important;color:#24150f!important}.step-card h2,.step-card p,.step-fields label{color:#24150f!important}.step-fields textarea{border:1px solid #aaa;background:#fff;color:#24150f;print-color-adjust:exact}}
+
+/* HINA’IKI V1 — recherche principale, pleine largeur, visible dès l’accueil */
+.hero{min-height:580px;padding:48px 4% 54px}
+.hero-inner{width:100%;max-width:1080px}
+.hero .search-section{background:transparent;padding:12px 0 4px}
+.hero .search-wrap{max-width:100%;width:100%}
+.hero .search-caption{color:#fff0d8;margin:0 0 14px;font-size:17px}
+.hero .search-form{width:100%;border-radius:999px;display:flex;align-items:center;gap:10px;padding:8px 9px 8px 23px;box-shadow:0 8px 28px #1c0b0a70}
+.hero .search-form input{min-width:0;flex:1;border:0;background:transparent;outline:none;font-size:17px;color:#382219}
+.hero .search-form button{flex:0 0 auto;border-radius:999px;min-height:48px;padding:10px 22px}
+.hero .results{max-height:310px;overflow-y:auto;text-align:left}
+@media(max-width:600px){.hero{min-height:530px;padding:38px 5% 45px}.hero .search-form{padding:7px 7px 7px 15px;gap:4px}.hero .search-form input{font-size:14px}.hero .search-form button{padding:9px 12px;font-size:12px;min-height:42px}.hero .search-caption{font-size:15px}}
 </style>
 </head>
 <body>
-<header><a class="brand" href="#accueil" aria-label="HINA’IKI, accueil"><span class="flower" aria-hidden="true">🌺</span><span class="brandname">HINA’IKI</span></a><nav aria-label="Navigation principale"><a class="active" href="#accueil">Accueil</a><a href="#accompagnement">Mon prochain pas</a><a href="#comment-ca-marche">Comment ça marche</a><a href="#apropos">À propos</a><a href="#contact">Contact</a></nav></header>
+<header><a class="brand" href="#accueil" aria-label="HINA’IKI, accueil"><span class="flower" aria-hidden="true">🌺</span><span class="brandname">HINA’IKI</span></a><nav aria-label="Navigation principale"><a class="active" href="#accueil">Accueil</a><a href="#accompagnement">Discuter</a><a href="#comment-ca-marche">Comment ça marche</a><a href="#apropos">À propos</a><a href="#recherche">Recherche</a></nav></header>
 <main>
-<section class="hero" id="accueil"><div class="hero-inner"><div class="overline">ÉCOUTER · EXPLORER · AVANCER</div><h1>HINA’IKI</h1><p class="script">Un prochain pas vers tes possibilités</p><p class="hero-description">Tu n’as pas besoin d’avoir toutes les réponses pour avancer. Parle librement de ce qui te préoccupe : ensemble, explorons les options et trouvons une première étape à ta portée.</p><div class="hero-actions"><a href="#mon-prochain-pas" class="btn btn-outline">📝 Ma fiche « Mon prochain pas »</a><a href="#accompagnement" class="btn btn-primary">🌺 Trouver mon prochain pas</a><button type="button" class="btn btn-outline" onclick="showAI()">🤎 Parler à HINA’IKI AI</button></div></div></section>
+<section class="hero" id="accueil"><div class="hero-inner"><div class="overline">ÉCOUTER · EXPLORER · AVANCER</div><h1>HINA’IKI</h1><p class="script">Des réponses et des possibilités à explorer</p><p class="hero-description">Pose tes questions, découvre des informations et explore de nouvelles possibilités. HINA’IKI AI est aussi là pour échanger avec toi, à ton rythme.</p><section class="search-section" id="recherche"><div class="search-wrap"><p class="search-caption">Que souhaitez-vous découvrir aujourd’hui ?</p><form class="search-form" id="hinaiki-search-form"><input name="q" type="search" placeholder="Posez une question ou recherchez sur le Web…" aria-label="Recherche sur le web" required><button type="submit">Rechercher ↗</button></form><div class="results" id="hinaiki-results" aria-live="polite"></div></div></section><div class="hero-actions"><button type="button" class="btn btn-outline" onclick="showAI()">🤎 Discuter avec HINA’IKI AI</button></div></div></section>
+
 <section id="accompagnement" aria-labelledby="accompagnement-title"><h2 class="section-title title-lines script" id="accompagnement-title">Par où souhaites-tu commencer ?</h2><p class="guide-intro">Choisis ce qui te ressemble aujourd’hui. Il n’y a pas de mauvaise réponse.</p><div class="guide-grid"><article class="guide-card"><span class="guide-icon" aria-hidden="true">🌺</span><h3>J’ai besoin d’aide</h3><p>Une difficulté te préoccupe ? Prenons le temps de comprendre ce qui se passe et d’explorer des solutions possibles.</p><button type="button" class="btn btn-primary" onclick="startJourney('aide')">Commencer</button></article><article class="guide-card"><span class="guide-icon" aria-hidden="true">✨</span><h3>J’ai une décision à prendre</h3><p>Tu hésites entre plusieurs choix ? Regardons leurs avantages, leurs limites et ce qui compte pour toi.</p><button type="button" class="btn btn-primary" onclick="startJourney('decision')">Explorer mes choix</button></article><article class="guide-card"><span class="guide-icon" aria-hidden="true">🌍</span><h3>J’ai un rêve à réaliser</h3><p>Un projet te tient à cœur ? Transformons-le en petites étapes concrètes, à ton rythme.</p><button type="button" class="btn btn-primary" onclick="startJourney('reve')">Faire mon premier pas</button></article></div></section>
 <section id="comment-ca-marche"><h2 class="section-title title-lines script">Un pas après l’autre</h2><div class="features"><article class="feature"><span class="feature-icon">🤎</span><h3>Exprime-toi</h3><p>Décris ta situation avec tes mots, même si tout n’est pas encore clair.</p></article><article class="feature"><span class="feature-icon">🌺</span><h3>Explore</h3><p>Examine plusieurs possibilités sans pression ni jugement.</p></article><article class="feature"><span class="feature-icon">✨</span><h3>Choisis</h3><p>Garde la liberté de décider ce qui te convient.</p></article><article class="feature"><span class="feature-icon">🌍</span><h3>Avance</h3><p>Identifie une action simple et réaliste pour commencer.</p></article></div><p class="guide-note">HINA’IKI est un outil d’accompagnement, pas un substitut à un professionnel de santé, du droit ou des finances. Évite de partager des informations très sensibles dans la discussion.</p></section>
 <section class="below" id="apropos"><div class="why"><h2>Pourquoi choisir <span>HINA’IKI ?</span></h2><ul><li>Un espace pour réfléchir sans jugement</li><li>Des choix éclairés, jamais imposés</li><li>Des étapes concrètes et accessibles</li><li>Une inspiration polynésienne chaleureuse</li></ul></div><div class="about"><h2>Ton chemin, à ton rythme 🌺</h2><p>Tu peux commencer avec une question, une hésitation ou simplement l’envie de changer quelque chose. HINA’IKI t’aide à explorer tes possibilités.</p><button class="btn btn-primary" type="button" onclick="showAI()">🌺 Parler à HINA’IKI AI</button></div></section>
-<section id="mon-prochain-pas" aria-labelledby="step-title">
-  <div class="step-card">
-    <p style="color:#f3c589;letter-spacing:2px;font-size:12px;font-weight:700">🌺 HINA’IKI · MA FICHE PERSONNELLE</p>
-    <h2 id="step-title">Mon prochain pas</h2>
-    <p>Après ta discussion avec HINA’IKI AI, crée une proposition personnalisée à partir de tes échanges. Tu peux ensuite la modifier librement.</p>
-    <div class="step-buttons"><button type="button" id="step-generate">🌺 Créer mon prochain pas avec HINA’IKI AI</button></div>
-    <div class="step-fields">
-      <label for="step-goal">🤎 Mon objectif
-        <textarea id="step-goal" maxlength="500" placeholder="Ex. Trouver un travail dans lequel je me sens mieux, sans précipiter mon départ."></textarea>
-      </label>
-      <label for="step-action">✨ Une petite action que je peux faire
-        <textarea id="step-action" maxlength="500" placeholder="Ex. Écrire trois choses que je souhaite changer dans mon travail."></textarea>
-      </label>
-      <label for="step-next">🌍 Et ensuite ?
-        <textarea id="step-next" maxlength="500" placeholder="Ex. Explorer les possibilités de formation ou de changement de poste."></textarea>
-      </label>
-    </div>
-    <div class="step-buttons">
-      <button type="button" id="step-download">⬇ Télécharger ma fiche</button>
-      <button type="button" id="step-print" class="secondary">🖨 Enregistrer en PDF / imprimer</button>
-      <button type="button" id="step-clear" class="secondary">Effacer ma fiche</button>
-    </div>
-    <p class="step-status" id="step-status" role="status" aria-live="polite"></p>
-    <p style="font-size:12px">🔒 Pour créer la fiche, les derniers messages de la conversation sont envoyés à HINA’IKI AI. La fiche remplie reste dans cette page, sans enregistrement permanent. Télécharge-la avant de quitter ou d’actualiser. Évite de partager des informations sensibles.</p>
-  </div>
-</section>
-<section class="search-section" id="contact"><div class="search-wrap"><h2>Explore aussi le monde avec HINA’IKI</h2><p>Recherche des informations sur le web ou échange avec notre assistant pour clarifier ton prochain pas.</p><form class="search-form" id="hinaiki-search-form"><input name="q" type="search" placeholder="Que souhaites-tu rechercher ?" aria-label="Recherche sur le web" required><button type="submit">Rechercher ↗</button></form><div class="results" id="hinaiki-results" aria-live="polite"></div></div></section>
+
 </main>
-<footer><strong>HINA’IKI</strong>Un prochain pas vers tes possibilités · Inspiré de la Polynésie<br>© 2026 HINA’IKI · Tous droits réservés</footer>
+<footer><strong>HINA’IKI</strong>Des réponses et des possibilités à explorer · Inspiré de la Polynésie<br>© 2026 HINA’IKI · Tous droits réservés</footer>
 <button class="chat-launcher" id="chat-launcher" type="button" onclick="showAI()">🌺 HINA’IKI AI · Discuter</button>
 <div class="chat" id="hinaiki-ai-chat" role="dialog" aria-label="Discussion avec HINA’IKI AI" aria-modal="false"><div class="chat-header"><div class="chat-heading"><span class="flower">🌺</span><div><strong>HINA’IKI AI</strong><small>Ton espace pour avancer</small></div></div><button class="chat-close" type="button" onclick="closeAI()" aria-label="Fermer la discussion">×</button></div><div class="messages" id="hinaiki-ai-messages" aria-live="polite"><div class="bubble ai">Ia ora na ! 🌺<br>Je suis HINA’IKI AI. Tu peux me parler librement : qu’aimerais-tu éclaircir ou accomplir aujourd’hui ?</div><div class="quick-actions" id="quick-actions"><button type="button" data-journey="aide">🌺 Besoin d’aide</button><button type="button" data-journey="decision">✨ Une décision</button><button type="button" data-journey="reve">🌍 Un rêve</button><button type="button" data-journey="libre">🤎 Parler librement</button></div></div><form class="chat-form" id="hinaiki-ai-form"><input type="text" id="hinaiki-ai-input" placeholder="Écris ton message ici..." maxlength="500" aria-label="Message pour HINA’IKI AI" required><button type="submit" aria-label="Envoyer le message">➤</button></form></div>
 <script>
@@ -183,89 +157,7 @@ const journeyPrompts={
 };
 function startJourney(type){sendQuestion(journeyPrompts[type]||journeyPrompts.libre)}
 document.querySelectorAll('[data-journey]').forEach(button=>button.addEventListener('click',()=>startJourney(button.dataset.journey)));
-if(window.matchMedia('(min-width: 960px)').matches){chat.classList.add('open');document.getElementById('chat-launcher').hidden=true;}
 
-// Fiche personnelle : aucun stockage distant ou permanent.
-const stepGoal=document.getElementById('step-goal');
-const stepAction=document.getElementById('step-action');
-const stepNext=document.getElementById('step-next');
-const stepStatus=document.getElementById('step-status');
-// Génération à partir de la conversation existante, sans changer le Worker ni le design du chat.
-const generateStepButton=document.getElementById('step-generate');
-generateStepButton.addEventListener('click',async()=>{
-  if(isSending){
-    stepStatus.textContent='Attends la fin de la réponse de HINA’IKI AI.';
-    return;
-  }
-  const actualMessages=conversationHistory.filter(m=>m.role==='user');
-  if(!actualMessages.length){
-    stepStatus.textContent='Discute d’abord avec HINA’IKI AI pour qu’elle puisse comprendre ta situation.';
-    showAI();
-    return;
-  }
-  generateStepButton.disabled=true;
-  generateStepButton.textContent='🌺 HINA’IKI prépare ta fiche…';
-  stepStatus.textContent='Création de ta fiche personnalisée en cours…';
-  try{
-    const instruction=[
-      "Crée ma fiche « Mon prochain pas » à partir de notre échange. N’invente rien.",
-      "Réponds seulement sur 3 lignes, sans Markdown ni introduction :",
-      "OBJECTIF: mon objectif en une phrase courte",
-      "ACTION: une petite action concrète et réaliste",
-      "ENSUITE: l’étape suivante possible",
-      "Si ma situation est floue, propose une action pour la clarifier."
-    ].join('\n');
-    const response=await fetch(API+'/ai',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({question:instruction,history:conversationHistory.slice(-12)})
-    });
-    const data=await response.json();
-    if(!response.ok)throw new Error(data.error||'Service indisponible');
-    const answer=String(data.answer||'');
-    const extract=(label,nextLabels)=>{
-      const start=new RegExp('(?:^|\\n)\\s*'+label+'\\s*:\\s*','i').exec(answer);
-      if(!start)return '';
-      const tail=answer.slice(start.index+start[0].length);
-      const stop=new RegExp('\\n\\s*(?:'+nextLabels.join('|')+')\\s*:','i').exec(tail);
-      return (stop?tail.slice(0,stop.index):tail).trim().replace(/^[-*]\s*/,'').slice(0,500);
-    };
-    const goal=extract('OBJECTIF',['ACTION','ENSUITE']);
-    const action=extract('ACTION',['OBJECTIF','ENSUITE']);
-    const next=extract('ENSUITE',['OBJECTIF','ACTION']);
-    if(!goal||!action||!next)throw new Error('La fiche n’a pas pu être structurée. Réessaie.');
-    stepGoal.value=goal;
-    stepAction.value=action;
-    stepNext.value=next;
-    stepStatus.textContent='🌺 Ta fiche est prête ! Relis-la, modifie-la si nécessaire, puis télécharge-la.';
-    document.getElementById('mon-prochain-pas').scrollIntoView({behavior:'smooth',block:'start'});
-  }catch(error){
-    stepStatus.textContent='Impossible de créer la fiche pour le moment : '+error.message;
-  }finally{
-    generateStepButton.disabled=false;
-    generateStepButton.textContent='🌺 Créer mon prochain pas avec HINA’IKI AI';
-  }
-});
-function getStepText(){return 'HINA’IKI — MON PROCHAIN PAS\n\nMON OBJECTIF\n'+stepGoal.value.trim()+'\n\nMON PREMIER PAS\n'+stepAction.value.trim()+'\n\nET ENSUITE ?\n'+stepNext.value.trim()+'\n';}
-function stepHasContent(){return [stepGoal,stepAction,stepNext].some(field=>field.value.trim());}
-document.getElementById('step-download').addEventListener('click',()=>{
- if(!stepHasContent()){stepStatus.textContent='Écris au moins une idée dans ta fiche avant de la télécharger.';return;}
- const blob=new Blob([getStepText()],{type:'text/plain;charset=utf-8'});
- const url=URL.createObjectURL(blob);
- const link=document.createElement('a');link.href=url;link.download='HINAIKI_Mon_Prochain_Pas.txt';
- document.body.appendChild(link);link.click();link.remove();
- setTimeout(()=>URL.revokeObjectURL(url),1000);
- stepStatus.textContent='Ta fiche a été préparée pour le téléchargement.';
-});
-document.getElementById('step-print').addEventListener('click',()=>{
- if(!stepHasContent()){stepStatus.textContent='Écris au moins une idée dans ta fiche avant de créer un PDF.';return;}
- window.print();
-});
-document.getElementById('step-clear').addEventListener('click',()=>{
- if(!stepHasContent())return;
- if(!confirm('Effacer les trois champs de ta fiche ?'))return;
- [stepGoal,stepAction,stepNext].forEach(field=>field.value='');
- stepStatus.textContent='La fiche a été effacée.';
-});
+
 </script>
 </body></html>
