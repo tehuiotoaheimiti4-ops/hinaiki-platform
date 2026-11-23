@@ -208,14 +208,12 @@ generateStepButton.addEventListener('click',async()=>{
   stepStatus.textContent='Création de ta fiche personnalisée en cours…';
   try{
     const instruction=[
-      "À partir de notre conversation précédente, prépare ma fiche personnelle « Mon prochain pas ».",
-      "N'invente aucun détail personnel. Si ma situation est encore floue, propose une première action de clarification.",
-      "Ne pose pas de question dans cette réponse.",
-      "Réponds uniquement avec ces trois lignes, sans introduction ni Markdown :",
-      "OBJECTIF: une phrase courte décrivant mon objectif",
-      "ACTION: une action concrète, simple et réaliste",
-      "ENSUITE: une étape possible après cette première action",
-      "Chaque valeur doit tenir en 250 caractères maximum."
+      "Crée ma fiche « Mon prochain pas » à partir de notre échange. N’invente rien.",
+      "Réponds seulement sur 3 lignes, sans Markdown ni introduction :",
+      "OBJECTIF: mon objectif en une phrase courte",
+      "ACTION: une petite action concrète et réaliste",
+      "ENSUITE: l’étape suivante possible",
+      "Si ma situation est floue, propose une action pour la clarifier."
     ].join('\n');
     const response=await fetch(API+'/ai',{
       method:'POST',
