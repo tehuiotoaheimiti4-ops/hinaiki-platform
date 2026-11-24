@@ -117,6 +117,9 @@ function addBubble(message,who){const el=document.createElement('div');el.classN
 const conversationHistory=[];
 const initialMessages=messages.innerHTML;
 let memorySession=null, memoryVersion=0, memoryReady=false, memoryLoading=false;
+let finishAuth;
+const authReady=new Promise(resolve=>{finishAuth=resolve;});
+let memorySync=Promise.resolve();
 const memoryButton=document.createElement('button');
 memoryButton.type='button'; memoryButton.textContent='Effacer mon historique';
 memoryButton.hidden=true; memoryButton.style.cssText='background:transparent;color:#ffe6bb;border:0;font-size:11px;padding:4px;';
@@ -158,7 +161,17 @@ memoryButton.addEventListener('click',async()=>{
 let isSending=false;
 async function sendQuestion(question){
   question=String(question||'').trim();
-  if(!question||isSending||memoryLoading)return;
+  if(!question||isSending)return;
+  isSending=true;
+  const submitButton=chatForm.querySelector('button');
+  submitButton.disabled=true;
+  await authReady;
+  await memorySync;
+  if(memoryLoading || (memorySession && !memoryReady)){
+    isSending=false;submitButton.disabled=false;
+    addBubble('Historique indisponible. Actualise la page avant de reprendre la discussion.','ai');
+    return;
+  }
   const version=memoryVersion;
   const session=memorySession;
   isSending=true;
@@ -179,7 +192,6 @@ async function sendQuestion(question){
     if(!response.ok)throw Error(data.error||'Service indisponible');
     if(version!==memoryVersion)return;
     const answer=String(data.answer||'Je n’ai pas de réponse pour le moment.');
-    reply.textContent='🌺 '+answer;
     conversationHistory.push({role:'user',content:question},{role:'assistant',content:answer});
     // Limite la quantité de contexte envoyée à chaque demande.
     if(conversationHistory.length>20)conversationHistory.splice(0,conversationHistory.length-20);
@@ -187,6 +199,7 @@ async function sendQuestion(question){
       try{await memoryRequest(session,{history:conversationHistory.map(m=>({role:m.role,content:m.content.slice(0,1800)}))});}
       catch{if(version===memoryVersion)addBubble('Cette conversation n’a pas pu être sauvegardée.','ai');}
     }
+    if(version===memoryVersion)reply.textContent='🌺 '+answer;
   }catch(err){
     reply.textContent='🌺 '+(err.message||'HINA’IKI AI est momentanément indisponible. Réessaie un peu plus tard.');
   }finally{
@@ -212,7 +225,7 @@ document.querySelectorAll('[data-journey]').forEach(button=>button.addEventListe
 <script defer crossorigin="anonymous" src="https://polite-phoenix-7584.clerk.accounts.dev/npm/@clerk/ui@1/dist/ui.browser.js"></script>
 <script defer crossorigin="anonymous" data-clerk-publishable-key="pk_test_cG9saXRlLXBob2VuaXgtNzU4NC5jbGVyay5hY2NvdW50cy5kZXYk" src="https://polite-phoenix-7584.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js"></script>
 <script>
-window.addEventListener('load', async () => {
+window.addEventListener('DOMContentLoaded', async () => {
   const login = document.getElementById('hinaiki-login');
   const profile = document.getElementById('hinaiki-profile');
   try {
@@ -222,7 +235,8 @@ window.addEventListener('load', async () => {
     let mounted = false;
     function renderAccount() {
       const signedIn = Boolean(clerk.user);
-      void syncMemory(signedIn ? clerk.session : null);
+      const session=signedIn ? clerk.session : null;
+      if((session?.id||null)!==(memorySession?.id||null))memorySync=syncMemory(session);
       login.hidden = signedIn;
       profile.hidden = !signedIn;
       if (signedIn && !mounted) { clerk.mountUserButton(profile, {afterSignOutUrl:'https://tehuiotoaheimiti4-ops.github.io/hinaiki-platform/'}); mounted = true; }
@@ -236,6 +250,9 @@ window.addEventListener('load', async () => {
   } catch (error) {
     login.textContent = 'Connexion indisponible';
     console.error('HINA’IKI connexion:', error);
+  } finally {
+    await memorySync;
+    finishAuth();
   }
 });
 </script>
