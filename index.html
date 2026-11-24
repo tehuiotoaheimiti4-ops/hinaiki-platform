@@ -113,12 +113,54 @@ const searchForm=document.getElementById('hinaiki-search-form'),resultsBox=docum
 searchForm.addEventListener('submit',async e=>{e.preventDefault();const query=searchForm.elements.q.value.trim();if(!query)return;resultsBox.replaceChildren();const status=document.createElement('p');status.className='status';status.textContent='Recherche en cours… 🌺';resultsBox.appendChild(status);try{const response=await fetch(API+'/search?q='+encodeURIComponent(query));if(!response.ok)throw Error('Service indisponible');const data=await response.json();resultsBox.replaceChildren();if(!Array.isArray(data.results)||!data.results.length){resultsBox.textContent='Aucun résultat trouvé.';return}data.results.forEach(item=>{const card=document.createElement('article'),link=document.createElement('a'),p=document.createElement('p');if(typeof item.url==='string'&&/^https?:\/\//i.test(item.url)){link.href=item.url;link.target='_blank';link.rel='noopener noreferrer'}link.textContent=item.title||'Résultat';p.textContent=(item.description||'').replace(/<[^>]*>/g,'');card.append(link,p);resultsBox.appendChild(card)})}catch(err){resultsBox.textContent='La recherche est momentanément indisponible. Réessaie plus tard.'}});
 const chatForm=document.getElementById('hinaiki-ai-form'),chatInput=document.getElementById('hinaiki-ai-input'),messages=document.getElementById('hinaiki-ai-messages');
 function addBubble(message,who){const el=document.createElement('div');el.className='bubble '+who;el.textContent=message;messages.appendChild(el);messages.scrollTop=messages.scrollHeight;return el}
-// Historique temporaire en mémoire : effacé au rechargement de la page.
+// Historique personnel pour les comptes connectés.
 const conversationHistory=[];
+const initialMessages=messages.innerHTML;
+let memorySession=null, memoryVersion=0, memoryReady=false, memoryLoading=false;
+const memoryButton=document.createElement('button');
+memoryButton.type='button'; memoryButton.textContent='Effacer mon historique';
+memoryButton.hidden=true; memoryButton.style.cssText='background:transparent;color:#ffe6bb;border:0;font-size:11px;padding:4px;';
+chat.querySelector('.chat-header').after(memoryButton);
+async function memoryRequest(session, data){
+  const token=await session.getToken();
+  if(!token)throw Error('Connexion requise');
+  const response=await fetch(API+'/memory',{method:data?'POST':'GET',cache:'no-store',headers:{Authorization:'Bearer '+token,...(data?{'Content-Type':'application/json'}:{})},...(data?{body:JSON.stringify(data)}:{})});
+  if(!response.ok)throw Error('Mémoire indisponible');
+  return response.json();
+}
+function resetMessages(){
+  messages.innerHTML=initialMessages;
+  messages.querySelectorAll('[data-journey]').forEach(b=>b.addEventListener('click',()=>startJourney(b.dataset.journey)));
+}
+async function syncMemory(session){
+  if((session?.id||null)===(memorySession?.id||null))return;
+  const version=++memoryVersion;
+  memorySession=session||null; memoryReady=false; memoryLoading=!!session;
+  conversationHistory.length=0; resetMessages(); memoryButton.hidden=true;
+  if(!session)return;
+  try{
+    const data=await memoryRequest(session);
+    if(version!==memoryVersion)return;
+    if(!Array.isArray(data.history))throw Error('Historique invalide');
+    conversationHistory.push(...data.history.slice(-20));
+    if(conversationHistory.length){document.getElementById('quick-actions')?.remove();conversationHistory.forEach(m=>addBubble(m.content,m.role==='user'?'user':'ai'));}
+    memoryReady=true; memoryButton.hidden=false;
+  }catch{if(version===memoryVersion)addBubble('Historique indisponible. Les nouveaux échanges ne seront pas sauvegardés pour le moment.','ai');}
+  finally{if(version===memoryVersion)memoryLoading=false;}
+}
+memoryButton.addEventListener('click',async()=>{
+  if(isSending||memoryLoading||!memoryReady||!confirm('Effacer ton historique enregistré ?'))return;
+  const version=memoryVersion; memoryLoading=true;
+  try{await memoryRequest(memorySession,{clear:true});if(version===memoryVersion){conversationHistory.length=0;resetMessages();}}
+  catch{if(version===memoryVersion)addBubble('Impossible d’effacer l’historique. Réessaie plus tard.','ai');}
+  finally{if(version===memoryVersion)memoryLoading=false;}
+});
 let isSending=false;
 async function sendQuestion(question){
   question=String(question||'').trim();
-  if(!question||isSending)return;
+  if(!question||isSending||memoryLoading)return;
+  const version=memoryVersion;
+  const session=memorySession;
   isSending=true;
   showAI();
   document.getElementById('quick-actions')?.remove();
@@ -131,15 +173,20 @@ async function sendQuestion(question){
     const response=await fetch(API+'/ai',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({question,history:conversationHistory.slice(-12)})
+      body:JSON.stringify({question,history:conversationHistory.slice(-6).map(m=>({role:m.role,content:m.content.slice(0,1800)}))})
     });
     const data=await response.json();
     if(!response.ok)throw Error(data.error||'Service indisponible');
+    if(version!==memoryVersion)return;
     const answer=String(data.answer||'Je n’ai pas de réponse pour le moment.');
     reply.textContent='🌺 '+answer;
     conversationHistory.push({role:'user',content:question},{role:'assistant',content:answer});
     // Limite la quantité de contexte envoyée à chaque demande.
-    if(conversationHistory.length>12)conversationHistory.splice(0,conversationHistory.length-12);
+    if(conversationHistory.length>20)conversationHistory.splice(0,conversationHistory.length-20);
+    if(session&&memoryReady&&version===memoryVersion){
+      try{await memoryRequest(session,{history:conversationHistory.map(m=>({role:m.role,content:m.content.slice(0,1800)}))});}
+      catch{if(version===memoryVersion)addBubble('Cette conversation n’a pas pu être sauvegardée.','ai');}
+    }
   }catch(err){
     reply.textContent='🌺 '+(err.message||'HINA’IKI AI est momentanément indisponible. Réessaie un peu plus tard.');
   }finally{
@@ -175,6 +222,7 @@ window.addEventListener('load', async () => {
     let mounted = false;
     function renderAccount() {
       const signedIn = Boolean(clerk.user);
+      void syncMemory(signedIn ? clerk.session : null);
       login.hidden = signedIn;
       profile.hidden = !signedIn;
       if (signedIn && !mounted) { clerk.mountUserButton(profile, {afterSignOutUrl:'https://tehuiotoaheimiti4-ops.github.io/hinaiki-platform/'}); mounted = true; }
