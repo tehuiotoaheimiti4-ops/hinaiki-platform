@@ -242,7 +242,13 @@ window.addEventListener('DOMContentLoaded', async () => {
       if((session?.id||null)!==(memorySession?.id||null))memorySync=syncMemory(session);
       login.hidden = signedIn;
       profile.hidden = !signedIn;
-      if (signedIn && !mounted) { clerk.mountUserButton(profile, {afterSignOutUrl:'https://tehuiotoaheimiti4-ops.github.io/hinaiki-platform/'}); mounted = true; }
+    if (signedIn && !mounted) {
+  clerk.mountUserButton(profile, {
+    afterSignOutUrl: 'https://tehuiotoaheimiti4-ops.github.io/hinaiki-platform/',
+    afterMultiSessionSingleSignOutUrl: 'https://tehuiotoaheimiti4-ops.github.io/hinaiki-platform/'
+  });
+  mounted = true;
+}
       if (!signedIn && mounted) { clerk.unmountUserButton(profile); mounted = false; }
     }
     login.textContent = 'Se connecter';
