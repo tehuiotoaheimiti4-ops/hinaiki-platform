@@ -86,10 +86,11 @@ main section:not(.hero){padding:38px max(4%,calc((100vw - 1350px)/2))}.section-t
 .hero .search-form button{flex:0 0 auto;border-radius:999px;min-height:48px;padding:10px 22px}
 .hero .results{max-height:310px;overflow-y:auto;text-align:left}
 @media(max-width:600px){.hero{min-height:530px;padding:38px 5% 45px}.hero .search-form{padding:7px 7px 7px 15px;gap:4px}.hero .search-form input{font-size:14px}.hero .search-form button{padding:9px 12px;font-size:12px;min-height:42px}.hero .search-caption{font-size:15px}}
+#hinaiki-login{padding:9px 14px;border-radius:40px;background:transparent;color:var(--cream);font-size:14px}#hinaiki-login:disabled{opacity:.65}#hinaiki-profile:not([hidden]){display:inline-flex;align-items:center} @media(max-width:600px){#hinaiki-login{font-size:12px;padding:8px}}
 </style>
 </head>
 <body>
-<header><a class="brand" href="#accueil" aria-label="HINA’IKI, accueil"><span class="flower" aria-hidden="true">🌺</span><span class="brandname">HINA’IKI</span></a><nav aria-label="Navigation principale"><a class="active" href="#accueil">Accueil</a><a href="#accompagnement">Discuter</a><a href="#comment-ca-marche">Comment ça marche</a><a href="#apropos">À propos</a><a href="#recherche">Recherche</a></nav></header>
+<header><a class="brand" href="#accueil" aria-label="HINA’IKI, accueil"><span class="flower" aria-hidden="true">🌺</span><span class="brandname">HINA’IKI</span></a><nav aria-label="Navigation principale"><a class="active" href="#accueil">Accueil</a><a href="#accompagnement">Discuter</a><a href="#comment-ca-marche">Comment ça marche</a><a href="#apropos">À propos</a><a href="#recherche">Recherche</a><button id="hinaiki-login" type="button" class="nav-cta" disabled>Connexion…</button><span id="hinaiki-profile" hidden></span></nav></header>
 <main>
 <section class="hero" id="accueil"><div class="hero-inner"><div class="overline">ÉCOUTER · EXPLORER · AVANCER</div><h1>HINA’IKI</h1><p class="script">Des réponses et des possibilités à explorer</p><p class="hero-description">Pose tes questions, découvre des informations et explore de nouvelles possibilités. HINA’IKI AI est aussi là pour échanger avec toi, à ton rythme.</p><section class="search-section" id="recherche"><div class="search-wrap"><p class="search-caption">Que souhaitez-vous découvrir aujourd’hui ?</p><form class="search-form" id="hinaiki-search-form"><input name="q" type="search" placeholder="Posez une question ou recherchez sur le Web…" aria-label="Recherche sur le web" required><button type="submit">Rechercher ↗</button></form><div class="results" id="hinaiki-results" aria-live="polite"></div></div></section><div class="hero-actions"><button type="button" class="btn btn-outline" onclick="showAI()">🤎 Discuter avec HINA’IKI AI</button></div></div></section>
 
@@ -159,5 +160,35 @@ function startJourney(type){sendQuestion(journeyPrompts[type]||journeyPrompts.li
 document.querySelectorAll('[data-journey]').forEach(button=>button.addEventListener('click',()=>startJourney(button.dataset.journey)));
 
 
+</script>
+
+<script defer crossorigin="anonymous" src="https://polite-phoenix-7584.clerk.accounts.dev/npm/@clerk/ui@1/dist/ui.browser.js"></script>
+<script defer crossorigin="anonymous" data-clerk-publishable-key="pk_test_cG9saXRlLXBob2VuaXgtNzU4NC5jbGVyay5hY2NvdW50cy5kZXYk" src="https://polite-phoenix-7584.clerk.accounts.dev/npm/@clerk/clerk-js@6/dist/clerk.browser.js"></script>
+<script>
+window.addEventListener('load', async () => {
+  const login = document.getElementById('hinaiki-login');
+  const profile = document.getElementById('hinaiki-profile');
+  try {
+    const clerk = window.Clerk;
+    if (!clerk) throw new Error('Clerk indisponible');
+    await clerk.load({ui:{ClerkUI:window.__internal_ClerkUICtor}});
+    let mounted = false;
+    function renderAccount() {
+      const signedIn = Boolean(clerk.user);
+      login.hidden = signedIn;
+      profile.hidden = !signedIn;
+      if (signedIn && !mounted) { clerk.mountUserButton(profile); mounted = true; }
+      if (!signedIn && mounted) { clerk.unmountUserButton(profile); mounted = false; }
+    }
+    login.textContent = 'Se connecter';
+    login.disabled = false;
+    login.addEventListener('click', () => clerk.openSignIn());
+    renderAccount();
+    clerk.addListener(renderAccount);
+  } catch (error) {
+    login.textContent = 'Connexion indisponible';
+    console.error('HINA’IKI connexion:', error);
+  }
+});
 </script>
 </body></html>
