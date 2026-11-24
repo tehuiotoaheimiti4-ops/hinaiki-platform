@@ -177,12 +177,12 @@ window.addEventListener('load', async () => {
       const signedIn = Boolean(clerk.user);
       login.hidden = signedIn;
       profile.hidden = !signedIn;
-      if (signedIn && !mounted) { clerk.mountUserButton(profile); mounted = true; }
+      if (signedIn && !mounted) { clerk.mountUserButton(profile, {afterSignOutUrl:'https://tehuiotoaheimiti4-ops.github.io/hinaiki-platform/'}); mounted = true; }
       if (!signedIn && mounted) { clerk.unmountUserButton(profile); mounted = false; }
     }
     login.textContent = 'Se connecter';
     login.disabled = false;
-    login.addEventListener('click', () => clerk.openSignIn());
+    login.addEventListener('click', () => clerk.openSignIn({forceRedirectUrl:'https://tehuiotoaheimiti4-ops.github.io/hinaiki-platform/',signUpForceRedirectUrl:'https://tehuiotoaheimiti4-ops.github.io/hinaiki-platform/'}));
     renderAccount();
     clerk.addListener(renderAccount);
   } catch (error) {
